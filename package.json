@@ -1,0 +1,44 @@
+{
+  "name": "postcss-simple-import",
+  "version": "1.0.0",
+  "description": "Consume @import in css recursively",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoubin/postcss-simple-import.git"
+  },
+  "keywords": [
+    "postcss",
+    "import",
+    "postcss-plugin"
+  ],
+  "author": "zoubin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zoubin/postcss-simple-import/issues"
+  },
+  "homepage": "https://github.com/zoubin/postcss-simple-import#readme",
+  "devDependencies": {
+    "callback-sequence": "^1.2.1",
+    "coveralls": "^2.11.4",
+    "del": "^2.0.2",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-istanbul": "^0.10.1",
+    "gulp-tape": "0.0.4",
+    "postcss-import": "^7.1.0",
+    "tap-spec": "^4.1.0",
+    "tape": "^4.2.0",
+    "task-tape": "^1.0.0"
+  },
+  "dependencies": {
+    "custom-resolve": "^0.2.1",
+    "glob": "^5.0.15",
+    "node-promisify": "^0.2.2",
+    "postcss": "^5.0.10",
+    "util-mix": "^3.0.2"
+  }
+}
