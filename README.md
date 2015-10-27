@@ -44,10 +44,9 @@ Should return a promise which resolves to an row object:
 ### cache
 File contents cache.
 
-Every time before `readFile`,
-`cache` is checked.
+`cache` is checked before each call to `readFile`.
 
-**NOTE**: if `importer` gives `source`, it should handle `cache` itself.
+**NOTE**: if `importer` produces `source`, it should handle `cache` itself.
 
 ### readFile
 Specify how to read file contents.
