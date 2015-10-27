@@ -17,7 +17,7 @@ This plugin implements a subset of functions of [postcss-import](https://github.
 
 The most important differences are:
 
-* `postcss-simple-import` is quite configurable
+* `postcss-simple-import` is crazily configurable
 * `postcss-simple-import` is always asynchrounous
 
 ## Options
@@ -36,6 +36,7 @@ Specify how to load files when processing `@import`.
 Type: `Function`
 
 Receives the import url, and the options object.
+
 Should return a promise which resolves to an row object:
 * `file`: *String* *required* the resolved file path
 * `source`: *String* *optional* the contents of the file
@@ -46,7 +47,7 @@ File contents cache.
 Every time before `readFile`,
 `cache` is checked.
 
-*NOTE*: if `importer` gives `source`, it should handle `cache` itself.
+**NOTE**: if `importer` gives `source`, it should handle `cache` itself.
 
 ### readFile
 Specify how to read file contents.
@@ -54,6 +55,7 @@ Specify how to read file contents.
 Type: `Function`
 
 Receives a filename and encoding.
+
 Should return a promise which resolves to the contents of the file.
 
 ### glob
@@ -62,6 +64,7 @@ Specify how to resolve globs.
 Type: `Function`
 
 Receives the glob string, and an object `{ cwd: dirname_of_the_processed_file }`.
+
 Should return a promise which resolves to an array of file paths.
 
 
@@ -74,6 +77,7 @@ Specify how to resolve file paths.
 Type: `Function`
 
 Receives the import string, and an object `{ basedir: dirname_of_the_processed_file }`.
+
 Should return a promise which resolves to an absolute file path.
 
 Type: `Object`
@@ -98,6 +102,7 @@ Type: `Function`
 Default: `postcss.parse`
 
 Recieves an object `{ file: file_path, source: file_contents }`.
+
 Should return a promise which resolves to the AST object
 
 
