@@ -101,8 +101,8 @@ function processRoot(root, from, opts) {
   // if we use `.all`, then in the final contents of "a.css",
   // css rules from "b.css" will come before those from "c.css"
   return sequence(rules, function (rule) {
-      return processRule(rule, from, opts)
-    })
+    return processRule(rule, from, opts)
+  })
     .then(function (rows) {
       return [].concat.apply([], rows)
         .reduce(function (o, r) {
