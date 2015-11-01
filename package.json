@@ -35,6 +35,7 @@
     "task-tape": "^1.0.0"
   },
   "dependencies": {
+    "async-array-methods": "^1.0.2",
     "custom-resolve": "^0.2.1",
     "glob": "^5.0.15",
     "node-promisify": "^0.2.2",

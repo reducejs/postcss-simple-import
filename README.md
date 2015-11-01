@@ -9,19 +9,11 @@ Consume `@import` in css recursively.
 [![dependencies](https://david-dm.org/zoubin/postcss-simple-import.svg)](https://david-dm.org/zoubin/postcss-simple-import)
 [![devDependencies](https://david-dm.org/zoubin/postcss-simple-import/dev-status.svg)](https://david-dm.org/zoubin/postcss-simple-import#info=devDependencies)
 
-This plugin implements a subset of functions of [postcss-import](https://github.com/postcss/postcss-import):
-
-* `@import` modules in the [node](https://nodejs.org/api/modules.html#modules_all_together)-style way
+* `@import` [node](https://nodejs.org/api/modules.html#modules_all_together)-style modules
 * Resolve the module entry according to the `style` field of `package.json` rather than `main`
-* Import a file only once
-
-The most important differences are:
-
-* `postcss-simple-import` is crazily configurable
-* `postcss-simple-import` is always asynchrounous
+* Files are imported only once
 
 ## Options
-There are several options to control the import behaviour.
 
 ### atRule
 Specify the name of at-rules to be processed.
@@ -35,37 +27,41 @@ Specify how to load files when processing `@import`.
 
 Type: `Function`
 
-Receives the import url, and the options object.
+Signature: `importer(url, from, opts)`
 
-Should return a promise which resolves to an row object:
-* `file`: *String* *required* the resolved file path
+* `url`: `@import "url";`
+* `from`: the absolute path of the current css file
+* `opts`: the options object
+
+Should return a promise which resolves to `row` objects:
+* `from`: *String* *required* the resolved file path
 * `source`: *String* *optional* the contents of the file
+
+If the promise resolves to `undefined`,
+the `importer` will be ignored.
 
 ### cache
 File contents cache.
-
-`cache` is checked before each call to `readFile`.
-
-**NOTE**: if `importer` produces `source`, it should handle `cache` itself.
 
 ### readFile
 Specify how to read file contents.
 
 Type: `Function`
 
-Receives a filename and encoding.
+Signature: `readFile(filename)`
 
 Should return a promise which resolves to the contents of the file.
 
 ### glob
 Specify how to resolve globs.
 
+It should have `glob.hasMagic(url)` to check whether globs exist.
+
 Type: `Function`
 
 Receives the glob string, and an object `{ cwd: dirname_of_the_processed_file }`.
 
 Should return a promise which resolves to an array of file paths.
-
 
 Type: `true`
 A promisified version of [glob](https://github.com/isaacs/node-glob) is used.
@@ -98,10 +94,15 @@ Specify how to build an AST from the source.
 
 Type: `Function`
 
-Default: `postcss.parse`
-
-Recieves an object `{ file: file_path, source: file_contents }`.
+Signature: `parse(source, from)`
 
 Should return a promise which resolves to the AST object
 
+### onImport
+Type: `Function`
+
+Signature: `onImport(from, imports)`
+
+* `from`: the css file
+* `imports`: files directly imported by `from`
 

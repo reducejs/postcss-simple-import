@@ -1,16 +1,24 @@
 var postcss = require('postcss')
-var promisify = require('node-promisify')
 var mix = require('util-mix')
 var fs = require('fs')
 var path = require('path')
 var resolver = require('custom-resolve')
+
+var promisify = require('node-promisify')
 var glob = promisify(require('glob'))
+var sequence = promisify(require('async-array-methods').forEach)
 
 module.exports = postcss.plugin('postcss-simple-import', atImport)
 
 function atImport(opts) {
   opts = mix({
     atRule: 'import',
+    // cache raw contents
+    // we cann't cache final contents, if we want to dedupe
+    // for example
+    // @import "c.css";@import "a.css";@import "b.css";
+    // if "a.css" imports "c.css" and "b.css", and we cache final contents
+    // then there is no way to prevent "c.css" from being loaded twice
     cache: {},
   }, opts)
 
@@ -22,109 +30,141 @@ function atImport(opts) {
     }, opts.resolve)))
   }
   if (typeof opts.parse !== 'function') {
-    opts.parse = function (row) {
+    opts.parse = function (source, from) {
       return Promise.resolve(
-        postcss.parse(row.source, { from: row.file })
+        postcss.parse(source, { from: from })
       )
     }
   }
   if (typeof opts.readFile !== 'function') {
-    opts.readFile = promisify(fs.readFile)
+    opts.readFile = promisify(function (file, cb) {
+      fs.readFile(file, 'utf8', cb)
+    })
   }
   if (opts.glob === true) {
     opts.glob = glob
   }
 
   return function (root, result) {
-    var state = mix({
+    var state = mix({}, opts, { processed: {} })
+    return processRow({
+      root: root,
       from: result.opts.from,
-      processed: {},
-    }, opts)
-    state.processed[state.from] = true
-    return processRoot(state, root)
+    }, state)
   }
 }
 
-function processRoot(opts, root) {
-  return parseAtRules(root, opts.atRule)
-    .then(function (rules) {
-      return Promise.all(
-        rules.map(processRule.bind(null, opts))
-      )
-    })
-    .then(function () {
-      return { root: root, from: opts.from }
+function processRow(row, opts) {
+  var from = row.from
+
+  if (opts.processed[from]) {
+    return Promise.resolve()
+  }
+  opts.processed[from] = true
+
+  if (row.root) {
+    return processRoot(row.root, from, opts)
+  }
+
+  if (row.source) {
+    opts.cache[from] = row.source
+  }
+
+  if (opts.cache[from]) {
+    return processSource(opts.cache[from], from, opts)
+  }
+
+  return opts.readFile(from)
+    .then(function (source) {
+      opts.cache[from] = source
+      return processSource(source, from, opts)
     })
 }
 
-function parseAtRules(root, name) {
+function processSource(source, from, opts) {
+  return opts.parse(source, from)
+    .then(function (root) {
+      return processRoot(root, from, opts)
+    })
+}
+
+function processRoot(root, from, opts) {
   var rules = []
-  root.walkAtRules(name, function (rule) {
+  root.walkAtRules(opts.atRule, function (rule) {
     rules.push(rule)
   })
-  return Promise.resolve(rules)
-}
-
-function prepareToProcess(file, opts) {
-  var processed = opts.processed[file]
-  if (!processed) {
-    opts.processed[file] = true
-  }
-  return processed
-}
-
-function processRule(opts, rule) {
-  return Promise.resolve(trim(rule.params))
-    .then(function (url) {
-      if (typeof opts.importer === 'function') {
-        return opts.importer(url, opts)
-      }
-      return resolveFilename(url, opts).then(function (files) {
-        return [].concat(files).map(function (file) {
-          return { file: file }
-        })
-      })
+  // DO NOT use `Promise.all`,
+  // cause we want to preserve import order
+  // e.g. "a.css"
+  // @import "b.css";@import "c.css"
+  // while "b.css" imports "c.css" to do something
+  // if we use `.all`, then in the final contents of "a.css",
+  // css rules from "b.css" will come before those from "c.css"
+  return sequence(rules, function (rule) {
+      return processRule(rule, from, opts)
     })
     .then(function (rows) {
-      return Promise.all([].concat(rows).map(function (row) {
-        if (prepareToProcess(row.file, opts)) {
-          return Promise.resolve()
-        }
-        return Promise.resolve(typeof row.source === 'string')
-          .then(function (hasSource) {
-            if (hasSource) {
-              return row
-            }
-            return readFile(row.file, opts).then(function (src) {
-              row.source = src
-              return row
-            })
-          })
-          .then(opts.parse)
-          .then(processRoot.bind(null, mix({}, opts, { from: row.file })))
-      }))
+      return [].concat.apply([], rows)
+        .reduce(function (o, r) {
+          o[r.from] = true
+          return o
+        }, {})
     })
-    .then(function (results) {
-      results.filter(Boolean)
-        .sort(function (p, q) {
-          return p.from < q.from ? -1 : 1
-        })
-        .map(function (result) {
-          return result.root
-        })
-        .forEach(insertBefore.bind(null, rule))
+    .then(function (imports) {
+      // the direct imports
+      if (opts.onImport) {
+        opts.onImport(from, Object.keys(imports))
+      }
+      return {
+        root: root,
+        from: from,
+        imports: imports,
+      }
     })
+}
+
+function processRule(rule, from, opts) {
+  var url = trim(rule.params)
+  return Promise.resolve()
     .then(function () {
+      if (typeof opts.importer === 'function') {
+        return opts.importer(url, from, opts)
+      }
+    })
+    .then(function (rows) {
+      if (rows) {
+        return rows
+      }
+      return resolveFilename(url, from, opts)
+        .then(function (files) {
+          return [].concat(files).map(function (file) {
+            return { from: file }
+          })
+        })
+    })
+    .then(function (rows) {
+      // we don't preseve order for globs
+      return [].concat(rows)
+        .map(function (row) {
+          return processRow(row, opts)
+        })
+    })
+    .then(Promise.all.bind(Promise))
+    .then(function (rows) {
+      return rows.filter(Boolean)
+        .map(function (row) {
+          insertBefore(rule, row.root)
+          return row
+        })
+    })
+    .then(function (imported) {
       rule.remove()
+      return imported
     })
 }
 
-function trim(s) {
-  return s && s.replace(/['"]/g, '').trim()
-}
-
-function resolveFilename(id, opts) {
-  var base = path.dirname(opts.from)
+function resolveFilename(id, from, opts) {
+  var base = path.dirname(from)
   if (opts.glob && opts.glob.hasMagic(id)) {
     // only handles local modules
     return opts.glob(id, { cwd: base })
@@ -137,16 +177,6 @@ function resolveFilename(id, opts) {
   return opts.resolve(id, { basedir: base })
 }
 
-function readFile(file, opts) {
-  var c = opts.cache[file]
-  if (c) {
-    return Promise.resolve(c)
-  }
-  c = opts.readFile(file, 'utf8')
-  opts.cache[file] = c
-  return c
-}
-
 function insertBefore(rule, child) {
   var childNodes = child && child.nodes || []
   if (childNodes.length) {
@@ -156,5 +186,9 @@ function insertBefore(rule, child) {
     node.parent = rule.parent
     rule.parent.insertBefore(rule, node)
   })
+}
+
+function trim(s) {
+  return s && s.replace(/['"]/g, '').trim()
 }
 
