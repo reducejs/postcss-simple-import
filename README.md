@@ -101,8 +101,9 @@ Should return a promise which resolves to the AST object
 ### onImport
 Type: `Function`
 
-Signature: `onImport(from, imports)`
+Signature: `onImport(from, imports, postcssOpts)`
 
 * `from`: the css file
 * `imports`: files directly imported by `from`
+* `postcssOpts`: the options passed to `process(css, postcssOpts)`
 

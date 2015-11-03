@@ -46,7 +46,10 @@ function atImport(opts) {
   }
 
   return function (root, result) {
-    var state = mix({}, opts, { processed: {} })
+    var state = mix({}, opts, {
+      processed: {},
+      postcssOpts: result.opts,
+    })
     return processRow({
       root: root,
       from: result.opts.from,
@@ -113,7 +116,7 @@ function processRoot(root, from, opts) {
     .then(function (imports) {
       // the direct imports
       if (opts.onImport) {
-        opts.onImport(from, Object.keys(imports))
+        opts.onImport(from, Object.keys(imports), opts.postcssOpts)
       }
       return {
         root: root,
