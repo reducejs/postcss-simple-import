@@ -11,6 +11,7 @@ var sequence = promisify(require('async-array-methods').forEach)
 module.exports = postcss.plugin('postcss-simple-import', atImport)
 
 function atImport(opts) {
+  var emitter = createEmitter()
   opts = mix({
     atRule: 'import',
     // cache raw contents
@@ -20,8 +21,14 @@ function atImport(opts) {
     // if "a.css" imports "c.css" and "b.css", and we cache final contents
     // then there is no way to prevent "c.css" from being loaded twice
     cache: {},
+    emitter: emitter,
   }, opts)
 
+  if (opts.on) {
+    Object.keys(opts.on).forEach(function (evt) {
+      emitter.on(evt, opts.on[evt])
+    })
+  }
   if (typeof opts.resolve !== 'function') {
     opts.resolve = promisify(resolver(mix({
       packageEntry: 'style',
@@ -118,6 +125,7 @@ function processRoot(root, from, opts) {
       if (opts.onImport) {
         opts.onImport(from, Object.keys(imports), opts.postcssOpts)
       }
+      opts.emitter.emit('imports', Object.keys(imports), from, opts)
       return {
         root: root,
         from: from,
@@ -149,6 +157,7 @@ function processRule(rule, from, opts) {
       // we don't preseve order for globs
       return [].concat(rows)
         .map(function (row) {
+          opts.emitter.emit('import', row.from, from, opts)
           return processRow(row, opts)
         })
     })
@@ -189,6 +198,12 @@ function insertBefore(rule, child) {
     node.parent = rule.parent
     rule.parent.insertBefore(rule, node)
   })
+}
+
+function createEmitter() {
+  var emitter = new (require('events'))
+  emitter.setMaxListeners(0)
+  return emitter
 }
 
 function trim(s) {
