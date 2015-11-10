@@ -117,14 +117,13 @@ Event listener map.
 Type: `Object`
 
 #### import
-Fired right before processing the contents.
-At this time the path of an imported file is resolved.
+Fired right after file path resolved, but before compilation.
 
 Listener signature: `fn(importedFile, from, opts)`
 
 
 #### imports
-Fired right after a file has all its imported files processed.
+Fired right after compilation.
 
 Listener signature: `fn(imports, from, opts)`
 
