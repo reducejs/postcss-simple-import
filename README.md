@@ -99,6 +99,10 @@ Signature: `parse(source, from)`
 Should return a promise which resolves to the AST object
 
 ### onImport
+**Deprecated**
+
+Use the [imports](#imports) event instead.
+
 Type: `Function`
 
 Signature: `onImport(from, imports, postcssOpts)`
@@ -106,4 +110,34 @@ Signature: `onImport(from, imports, postcssOpts)`
 * `from`: the css file
 * `imports`: files directly imported by `from`
 * `postcssOpts`: the options passed to `process(css, postcssOpts)`
+
+### on
+Event listener map.
+
+Type: `Object`
+
+#### import
+Fired right before processing the contents.
+At this time the path of an imported file is resolved.
+
+Listener signature: `fn(importedFile, from, opts)`
+
+
+#### imports
+Fired right after a file has all its imported files processed.
+
+Listener signature: `fn(imports, from, opts)`
+
+* `imports`: `Array`
+
+
+### postcssOpts
+This is not an option.
+It is read only.
+In some of the above options,
+you can read this object through `opt.postcssOpts`.
+
+Type: `Object`
+
+Options passed to `process(source, postcssOpts)`
 
