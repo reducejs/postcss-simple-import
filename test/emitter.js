@@ -49,7 +49,7 @@ test('emitter', function(t) {
     postcssOpts
   )
   .then(function (result) {
-    t.equal(result.css, 'a {}\nb {}\nc {}\nf {}\ne {}\nd {}')
+    t.equal(result.css, 'a {}b {}c {}\nf {}\ne {}\nd {}')
   })
   .catch(function (err) {
     t.error(err)

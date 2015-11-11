@@ -196,8 +196,12 @@ function insertBefore(rule, child) {
   }
   childNodes.forEach(function (node) {
     node.parent = rule.parent
-    rule.parent.insertBefore(rule, node)
+    // DO NOT use insertBefore
+    // declarations like `*display:none` will be transformed to `display:none`
+    //rule.parent.insertBefore(rule, node)
   })
+  var nodes = rule.parent.nodes
+  nodes.splice.apply(nodes, [ nodes.indexOf(rule), 0 ].concat(childNodes))
 }
 
 function createEmitter() {
