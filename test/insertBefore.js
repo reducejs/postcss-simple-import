@@ -29,8 +29,6 @@ test('insertBefore', function(t) {
     postcssOpts
   )
   .then(function (result) {
-    var fs = require('fs')
-    fs.writeFileSync('x.css', result.css)
     t.equal(result.css, 'ie9 { display: inline\\0/IE9; }\nie89 { display: inline\\0/IE8+9; }\nie8 { display: inline\\0; }\nie7 { *display: inline; }\nie6{ _display: inline; }')
   })
   .catch(function (err) {
