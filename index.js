@@ -170,7 +170,7 @@ function processRule(rule, from, opts) {
         })
     })
     .then(function (imported) {
-      rule.remove()
+      rule.parent.nodes.splice(rule.parent.nodes.indexOf(rule), 1)
       return imported
     })
 }
