@@ -1,4 +1,10 @@
-<!-- LATEST f159aa0 -->
+<!-- LATEST 742b573 -->
+
+## [v2.1.3](https://github.com/zoubin/postcss-simple-import/commit/742b573) (2015-11-12)
+
+* [ 2015-11-12 [a695f42](https://github.com/zoubin/postcss-simple-import/commit/a695f42) ] Update glob to 6.0.1, remove unused test code
+
+* [ 2015-11-12 [9012eea](https://github.com/zoubin/postcss-simple-import/commit/9012eea) ] CHANGELOG
 
 ## [v2.1.2](https://github.com/zoubin/postcss-simple-import/commit/f159aa0) (2015-11-12)
 
