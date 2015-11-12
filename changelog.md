@@ -1,4 +1,20 @@
-<!-- LATEST aca16d2 -->
+<!-- LATEST f159aa0 -->
+
+## [v2.1.2](https://github.com/zoubin/postcss-simple-import/commit/f159aa0) (2015-11-12)
+
+* [ 2015-11-12 [5991951](https://github.com/zoubin/postcss-simple-import/commit/5991951) ] Remove rule with splice() rather than remove()
+
+## [v2.1.1](https://github.com/zoubin/postcss-simple-import/commit/75ec07c) (2015-11-11)
+
+* [ 2015-11-11 [c94614d](https://github.com/zoubin/postcss-simple-import/commit/c94614d) ] Fix insertBefore: use splice instead.
+    
+    >insertBefore will misreplace `*display:none` with `display:none`
+
+* [ 2015-11-10 [2f40244](https://github.com/zoubin/postcss-simple-import/commit/2f40244) ] Update gulp-tape
+
+* [ 2015-11-10 [cc187a8](https://github.com/zoubin/postcss-simple-import/commit/cc187a8) ] Travis: add node 5
+
+* [ 2015-11-10 [a49912d](https://github.com/zoubin/postcss-simple-import/commit/a49912d) ] Update readme, CHANGELOG
 
 ## [v2.1.0](https://github.com/zoubin/postcss-simple-import/commit/aca16d2) (2015-11-10)
 
