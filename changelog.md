@@ -1,4 +1,12 @@
-<!-- 15e3ba4 1449737001000 -->
+<!-- 5b4de13 1449739234000 -->
+
+## [v2.2.0](https://github.com/zoubin/postcss-simple-import/commit/5b4de13) (2015-12-10)
+
+* [[`f74fae2`](https://github.com/zoubin/postcss-simple-import/commit/f74fae2)] Support non-promise option methods
+
+* [[`b6f5951`](https://github.com/zoubin/postcss-simple-import/commit/b6f5951)] Update readme
+
+* [[`7950e30`](https://github.com/zoubin/postcss-simple-import/commit/7950e30)] CHANGELOG
 
 ## [v2.1.4](https://github.com/zoubin/postcss-simple-import/commit/15e3ba4) (2015-12-10)
 
