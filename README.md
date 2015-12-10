@@ -1,13 +1,11 @@
 # postcss-simple-import
-Consume `@import` in css recursively.
-
-[![npm](https://nodei.co/npm/postcss-simple-import.png?downloads=true)](https://www.npmjs.org/package/postcss-simple-import)
-
 [![version](https://img.shields.io/npm/v/postcss-simple-import.svg)](https://www.npmjs.org/package/postcss-simple-import)
 [![status](https://travis-ci.org/zoubin/postcss-simple-import.svg?branch=master)](https://travis-ci.org/zoubin/postcss-simple-import)
 [![coverage](https://img.shields.io/coveralls/zoubin/postcss-simple-import.svg)](https://coveralls.io/github/zoubin/postcss-simple-import)
 [![dependencies](https://david-dm.org/zoubin/postcss-simple-import.svg)](https://david-dm.org/zoubin/postcss-simple-import)
 [![devDependencies](https://david-dm.org/zoubin/postcss-simple-import/dev-status.svg)](https://david-dm.org/zoubin/postcss-simple-import#info=devDependencies)
+
+Consume `@import` in css recursively.
 
 * `@import` [node](https://nodejs.org/api/modules.html#modules_all_together)-style modules
 * Resolve the module entry according to the `style` field of `package.json` rather than `main`
