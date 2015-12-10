@@ -31,12 +31,13 @@ Signature: `importer(url, from, opts)`
 * `from`: the absolute path of the current css file
 * `opts`: the options object
 
-Should return a promise which resolves to `row` objects:
+[`opts.postcssOpts`](#postcssopts) is accessible.
+
+Should return an array of objects (or promises) with the following fields:
 * `from`: *String* *required* the resolved file path
 * `source`: *String* *optional* the contents of the file
 
-If the promise resolves to `undefined`,
-the `importer` will be ignored.
+If `undefined` returned, the `importer` will be ignored.
 
 ### cache
 File contents cache.
@@ -48,7 +49,7 @@ Type: `Function`
 
 Signature: `readFile(filename)`
 
-Should return a promise which resolves to the contents of the file.
+Should return a string (or promise) of contents of the file.
 
 ### glob
 Specify how to resolve globs.
@@ -59,7 +60,7 @@ Type: `Function`
 
 Receives the glob string, and an object `{ cwd: dirname_of_the_processed_file }`.
 
-Should return a promise which resolves to an array of file paths.
+Should return an array (or a promise) of file paths.
 
 Type: `true`
 A promisified version of [glob](https://github.com/isaacs/node-glob) is used.
@@ -71,7 +72,7 @@ Type: `Function`
 
 Receives the import string, and an object `{ basedir: dirname_of_the_processed_file }`.
 
-Should return a promise which resolves to an absolute file path.
+Should return an absolute file path (or promise).
 
 Type: `Object`
 
@@ -94,7 +95,7 @@ Type: `Function`
 
 Signature: `parse(source, from)`
 
-Should return a promise which resolves to the AST object
+Should return the AST object (or promise).
 
 ### onImport
 **Deprecated**
@@ -107,10 +108,10 @@ Signature: `onImport(from, imports, postcssOpts)`
 
 * `from`: the css file
 * `imports`: files directly imported by `from`
-* `postcssOpts`: the options passed to `process(css, postcssOpts)`
+* `postcssOpts`: [postcssOpts](#postcssopts)
 
 ### on
-Event listener map.
+Event listeners.
 
 Type: `Object`
 
@@ -118,6 +119,8 @@ Type: `Object`
 Fired right after file path resolved, but before compilation.
 
 Listener signature: `fn(importedFile, from, opts)`
+
+[`opts.postcssOpts`](#postcssopts) is accessible.
 
 
 #### imports
@@ -127,12 +130,9 @@ Listener signature: `fn(imports, from, opts)`
 
 * `imports`: `Array`
 
+[`opts.postcssOpts`](#postcssopts) is accessible.
 
 ### postcssOpts
-This is not an option.
-It is read only.
-In some of the above options,
-you can read this object through `opt.postcssOpts`.
 
 Type: `Object`
 

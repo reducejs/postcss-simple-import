@@ -7,6 +7,7 @@ var resolver = require('custom-resolve')
 var promisify = require('node-promisify')
 var glob = promisify(require('glob'))
 var series = require('async-array-methods').series
+var RESOLVED = Promise.resolve()
 
 module.exports = postcss.plugin('postcss-simple-import', atImport)
 
@@ -38,9 +39,7 @@ function atImport(opts) {
   }
   if (typeof opts.parse !== 'function') {
     opts.parse = function (source, from) {
-      return Promise.resolve(
-        postcss.parse(source, { from: from })
-      )
+      return postcss.parse(source, { from: from })
     }
   }
   if (typeof opts.readFile !== 'function') {
@@ -55,7 +54,7 @@ function atImport(opts) {
   return function (root, result) {
     var state = mix({}, opts, {
       processed: {},
-      postcssOpts: result.opts,
+      postcssOpts: mix({}, result.opts),
     })
     return processRow({
       root: root,
@@ -68,7 +67,7 @@ function processRow(row, opts) {
   var from = row.from
 
   if (opts.processed[from]) {
-    return Promise.resolve()
+    return RESOLVED
   }
   opts.processed[from] = true
 
@@ -84,18 +83,20 @@ function processRow(row, opts) {
     return processSource(opts.cache[from], from, opts)
   }
 
-  return opts.readFile(from)
-    .then(function (source) {
-      opts.cache[from] = source
-      return processSource(source, from, opts)
-    })
+  return RESOLVED.then(function () {
+    return opts.readFile(from)
+  }).then(function (source) {
+    opts.cache[from] = source
+    return processSource(source, from, opts)
+  })
 }
 
 function processSource(source, from, opts) {
-  return opts.parse(source, from)
-    .then(function (root) {
-      return processRoot(root, from, opts)
-    })
+  return RESOLVED.then(function () {
+    return opts.parse(source, from)
+  }).then(function (root) {
+    return processRoot(root, from, opts)
+  })
 }
 
 function processRoot(root, from, opts) {
@@ -136,7 +137,7 @@ function processRoot(root, from, opts) {
 
 function processRule(rule, from, opts) {
   var url = trim(rule.params)
-  return Promise.resolve()
+  return RESOLVED
     .then(function () {
       if (typeof opts.importer === 'function') {
         return opts.importer(url, from, opts)
@@ -179,14 +180,17 @@ function resolveFilename(id, from, opts) {
   var base = path.dirname(from)
   if (opts.glob && opts.glob.hasMagic(id)) {
     // only handles local modules
-    return opts.glob(id, { cwd: base })
-      .then(function (files) {
-        return files.map(function (file) {
-          return path.resolve(base, file)
-        })
+    return RESOLVED.then(function () {
+      return opts.glob(id, { cwd: base })
+    }).then(function (files) {
+      return files.map(function (file) {
+        return path.resolve(base, file)
       })
+    })
   }
-  return opts.resolve(id, { basedir: base })
+  return RESOLVED.then(function () {
+    return opts.resolve(id, { basedir: base })
+  })
 }
 
 function insertBefore(rule, child) {
