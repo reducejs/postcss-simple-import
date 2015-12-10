@@ -1,12 +1,12 @@
 var postcss = require('postcss')
-var mix = require('util-mix')
+var mix = require('mixy')
 var fs = require('fs')
 var path = require('path')
 var resolver = require('custom-resolve')
 
 var promisify = require('node-promisify')
 var glob = promisify(require('glob'))
-var sequence = promisify(require('async-array-methods').forEach)
+var series = require('async-array-methods').series
 
 module.exports = postcss.plugin('postcss-simple-import', atImport)
 
@@ -31,9 +31,9 @@ function atImport(opts) {
   }
   if (typeof opts.resolve !== 'function') {
     opts.resolve = promisify(resolver(mix({
-      packageEntry: 'style',
+      main: 'style',
       extensions: '.css',
-      symlinks: true,
+      symlink: true,
     }, opts.resolve)))
   }
   if (typeof opts.parse !== 'function') {
@@ -110,7 +110,7 @@ function processRoot(root, from, opts) {
   // while "b.css" imports "c.css" to do something
   // if we use `.all`, then in the final contents of "a.css",
   // css rules from "b.css" will come before those from "c.css"
-  return sequence(rules, function (rule) {
+  return series(rules, function (rule) {
     return processRule(rule, from, opts)
   })
     .then(function (rows) {

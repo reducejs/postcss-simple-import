@@ -1,4 +1,4 @@
-var test = require('tape')
+var test = require('tap').test
 var run = require('./util/run')
 var fixtures = require('./util/fixtures')
 var Map = require('./util/map')

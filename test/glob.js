@@ -1,4 +1,4 @@
-var test = require('tape')
+var test = require('tap').test
 var run = require('./util/run')
 
 test('glob', run.bind(

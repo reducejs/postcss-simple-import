@@ -1,4 +1,4 @@
-var test = require('tape')
+var test = require('tap').test
 var atImport = require('..')
 var postcss = require('postcss')
 var path = require('path')

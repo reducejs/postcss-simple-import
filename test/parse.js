@@ -1,4 +1,4 @@
-var test = require('tape')
+var test = require('tap').test
 var run = require('./util/run')
 var postcss = require('postcss')
 var fixtures = require('./util/fixtures')
