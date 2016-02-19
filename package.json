@@ -4,13 +4,13 @@
   "description": "Consume @import in css recursively",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && tap --cov test/*.js",
+    "test": "npm run lint && tap test/*.js",
     "lint": "eslint *.js 'lib/**/*.js' test/*.js bin/*.js",
-    "coveralls": "COVERALLS_REPO_TOKEN=WyHCco2AXE80a5PyeSgqfJerG6GLUwASu npm test"
+    "coveralls": "COVERALLS_REPO_TOKEN=j8051lbYTbBiBiitjl1vym3DI0OXFtUWp tap --cov test/*.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zoubin/postcss-simple-import.git"
+    "url": "git+https://github.com/reducejs/postcss-simple-import.git"
   },
   "keywords": [
     "postcss",
@@ -19,18 +19,21 @@
   ],
   "author": "zoubin",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/zoubin/postcss-simple-import/issues"
+  "engines": {
+    "node": ">=4.2.1"
   },
-  "homepage": "https://github.com/zoubin/postcss-simple-import#readme",
+  "bugs": {
+    "url": "https://github.com/reducejs/postcss-simple-import/issues"
+  },
+  "homepage": "https://github.com/reducejs/postcss-simple-import#readme",
   "devDependencies": {
-    "eslint": "^1.10.1",
-    "tap": "^2.3.1"
+    "eslint": "^2.1.0",
+    "tap": "^5.0.0"
   },
   "dependencies": {
     "async-array-methods": "^2.1.0",
     "custom-resolve": "^1.0.0",
-    "glob": "^6.0.1",
+    "glob": "^7.0.0",
     "node-promisify": "^1.0.0",
     "postcss": "^5.0.10",
     "mixy": "^1.0.0"
