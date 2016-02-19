@@ -1,9 +1,10 @@
 # postcss-simple-import
 [![version](https://img.shields.io/npm/v/postcss-simple-import.svg)](https://www.npmjs.org/package/postcss-simple-import)
-[![status](https://travis-ci.org/zoubin/postcss-simple-import.svg?branch=master)](https://travis-ci.org/zoubin/postcss-simple-import)
-[![coverage](https://img.shields.io/coveralls/zoubin/postcss-simple-import.svg)](https://coveralls.io/github/zoubin/postcss-simple-import)
-[![dependencies](https://david-dm.org/zoubin/postcss-simple-import.svg)](https://david-dm.org/zoubin/postcss-simple-import)
-[![devDependencies](https://david-dm.org/zoubin/postcss-simple-import/dev-status.svg)](https://david-dm.org/zoubin/postcss-simple-import#info=devDependencies)
+[![status](https://travis-ci.org/reducejs/postcss-simple-import.svg?branch=master)](https://travis-ci.org/reducejs/postcss-simple-import)
+[![coverage](https://img.shields.io/coveralls/reducejs/postcss-simple-import.svg)](https://coveralls.io/github/reducejs/postcss-simple-import)
+[![dependencies](https://david-dm.org/reducejs/postcss-simple-import.svg)](https://david-dm.org/reducejs/postcss-simple-import)
+[![devDependencies](https://david-dm.org/reducejs/postcss-simple-import/dev-status.svg)](https://david-dm.org/reducejs/postcss-simple-import#info=devDependencies)
+![node](https://img.shields.io/node/v/postcss-simple-import.svg)
 
 Consume `@import` in css recursively.
 
